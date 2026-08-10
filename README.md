@@ -8,6 +8,8 @@ Government contract lead pipeline for OMEGACORTEX LLC. Scans SAM.gov (federal) a
 
 ## Start here
 
+First time on a new machine: [`docs/SETUP.md`](docs/SETUP.md).
+
 New to this project, human or agent: read [`docs/MASTER-HANDOFF.md`](docs/MASTER-HANDOFF.md) in full before touching anything. It assumes zero prior context and covers the environment, incident history, hard rules, and the phased work plan.
 
 For day-to-day operation, see [`docs/RUNBOOK.md`](docs/RUNBOOK.md).
@@ -30,6 +32,7 @@ For day-to-day operation, see [`docs/RUNBOOK.md`](docs/RUNBOOK.md).
 
 ```
 docs/
+  SETUP.md             One-time environment setup, Mac mini + MacBook
   MASTER-HANDOFF.md    Full context, incident history, phased work plan
   RUNBOOK.md           Daily operation, failure signatures, traps
   HANDOFF-PROTOCOL.md  Multi-device access, session start/end discipline

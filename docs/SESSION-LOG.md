@@ -6,6 +6,30 @@ Every session appends an entry here before pushing. A session without a pushed h
 
 ---
 
+## 2026-08-10 19:00 — Full verification scan — no changes made
+
+**Purpose:** confirm whether the system is production-ready. Read-only scan.
+
+**Verdict: not ready. Zero phases executed. State identical to the 3:54 PM scan.**
+
+**Verified against the live instance**
+- 7 workflows present, should be 6. Probe `5ToIbeWkCWOFLywk` still active with an 11:59 PM trigger.
+- `SAM.gov Query` unchanged: `limit=1000`, `postedFrom` 60 days. Still failing.
+- SAM.gov API key still hardcoded in plaintext on that node.
+- Sheets backoff unapplied: 0/12 Lead Intelligence, 0/2 Contract Scanner, 0/3 Failure Logger.
+- All three production workflows active, published, schedules armed.
+- Lifetime: 117 executions, 54 errors, 46% failure rate.
+- Last runs: exec 117 Lead Intelligence success in 32s producing 0 drafts; exec 116 Contract Scanner error after 345s.
+
+**What works**
+Lead Intelligence v2 executes end to end without crashing and writes Opportunity State and all four Context Hub tabs.
+
+**What does not**
+Intake is dead, so no new leads arrive. Award research returns 0 candidates, so scoring, the draft gate, and Gmail never execute. Net output is zero drafts.
+
+**Next step**
+Phase 0 in `MASTER-HANDOFF.md` §7. Nothing has begun.
+
 ## 2026-08-10 — Mac mini — Emergency recovery
 
 **State at start:** Lead Intelligence v2 appeared to have lost all 43 nodes. Opening it showed a blank canvas. 88.9% execution failure rate.

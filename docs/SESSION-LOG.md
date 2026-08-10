@@ -6,6 +6,35 @@ Every session appends an entry here before pushing. A session without a pushed h
 
 ---
 
+## 2026-08-10 23:15 — Phase 0.3 + Phase 1 automation prepared
+
+**Built** `scripts/apply-phase-0-1.sh`. One command applies the Sheets backoff
+and the SAM.gov query fix, with export, decode, diff preview, confirmation
+prompt, import, reactivate, and live verification. Idempotent, safe to re-run.
+Transform logic dry-run tested against realistic node structures.
+
+**Key finding that reshaped the plan.** Mapped the full connection graph of Lead
+Intelligence v2. The entire scoring and draft chain hangs off award research in
+series: Select Award Candidates -> award fetches -> Normalize Award Intelligence
+-> Agent Intel v2 Scoring -> draft gate -> Gmail. When award candidates hit zero,
+everything downstream starves.
+
+But the award research is not broken. USASpending works correctly for SAM.gov
+opportunities. It returned zeros only because Contract Scanner has been dead
+since Aug 8, leaving nothing but WEBS records to research. **Restoring intake
+should unblock the draft chain without touching business logic.** This makes
+Phase 2 routing a quality improvement rather than a prerequisite.
+
+**Not applied.** Writes to the live instance are blocked on the assistant side by
+a safety classifier. The script exists so Luis runs it himself.
+
+**Next step**
+Run `./scripts/apply-phase-0-1.sh`, republish all three workflows in the UI,
+then manually execute Contract Scanner and confirm SAM.gov returns records.
+
+**Still manual**
+Delete the probe workflow. Move the SAM.gov key to a credential and rotate it.
+
 ## 2026-08-10 19:00 — Full verification scan — no changes made
 
 **Purpose:** confirm whether the system is production-ready. Read-only scan.

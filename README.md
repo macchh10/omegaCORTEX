@@ -12,6 +12,8 @@ New to this project, human or agent: read [`docs/MASTER-HANDOFF.md`](docs/MASTER
 
 For day-to-day operation, see [`docs/RUNBOOK.md`](docs/RUNBOOK.md).
 
+**Every session ends with a handoff.** See [`docs/HANDOFF-PROTOCOL.md`](docs/HANDOFF-PROTOCOL.md) and append to [`docs/SESSION-LOG.md`](docs/SESSION-LOG.md) before you push.
+
 ---
 
 ## Hard rules
@@ -27,11 +29,27 @@ For day-to-day operation, see [`docs/RUNBOOK.md`](docs/RUNBOOK.md).
 ## Layout
 
 ```
-docs/         Handoff, runbook, incident history
-scripts/      Backup, verification, secret scanning, health checks
-workflows/    Redacted workflow JSON, committed
-backups/      Local exports, gitignored
+docs/
+  MASTER-HANDOFF.md    Full context, incident history, phased work plan
+  RUNBOOK.md           Daily operation, failure signatures, traps
+  HANDOFF-PROTOCOL.md  Multi-device access, session start/end discipline
+  SESSION-LOG.md       Append one entry per session, newest first
+  STATUS.md            Verified state and phase progress
+scripts/               Backup, decode, verify, secret scan, health check
+workflows/             Redacted workflow JSON, committed
+backups/               Local exports, gitignored
 ```
+
+## Working from another device
+
+n8n runs on the **Mac mini** and cannot be copied or synced. Use Tailscale plus SSH so every device is a window into that one instance:
+
+```bash
+ssh luislozada@macmini
+cd ~/Documents/omegacortex-agent && claude
+```
+
+Details in [`docs/HANDOFF-PROTOCOL.md`](docs/HANDOFF-PROTOCOL.md).
 
 ---
 

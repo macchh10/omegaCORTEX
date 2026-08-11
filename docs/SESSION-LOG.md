@@ -6,6 +6,48 @@ Every session appends an entry here before pushing. A session without a pushed h
 
 ---
 
+## 2026-08-11 00:25 — Mac mini — WEBS blade live (login + scrape + sheets)
+
+**State at start:** Sheets already WEBS-only. SAM intake off. WEBS login broken: credentials never reached the wire on form-urlencoded POSTs. Live scrape later reached Deduplicate then failed Sheets writes on 50k cell limit.
+
+**Done**
+- Root-caused n8n HttpRequestV3: form-urlencoded moves body → `requestOptions.form` before `httpCustomAuth.body` merge, so secrets landed on JSON body / never as form fields. `$credentials` in HTTP body expressions is undefined.
+- Patched live `HttpRequestV3.node.js` to merge `customAuth.body` into `form`/`formData` when present. Added idempotent `scripts/patch-n8n-httprequest-form-auth.sh` (re-run after n8n upgrades + restart LaunchAgent).
+- WEBS login: `LoginPage.aspx`, form-urlencoded VIEWSTATE keypair + `Image1=Log In`, credential `WEBS Account` body shape `{txtEmail,txtPassword}` (no secrets in workflow JSON).
+- Fixed Build/Validate WEBS Login JS syntax; session validate checks logout/search presence.
+- Sheets cell safety: clip strings to 45k in Parse Details, Normalize, Deduplicate, Map Agent Intel, Map All Leads.
+- Dedup: same-source WEBS IDs count as Updated (not cross-source Duplicate), so All Leads upserts again.
+- WEBS Test **active + published**: Daily → live login chain; Manual → sample. SAM/NAICS disabled on WEBS Test. Scanner inactive, SAM off.
+- Unpublished debug workflows `WebsCredDebug01/02` (still listed; delete in UI).
+- `scripts/scan-secrets.sh` clean.
+
+**Verified (live)**
+- Health 200; HttpRequest patch marker present.
+- Exec **155** WEBS Test **success**: Validate logged in; 9 result links; Deduplicate 9 Updated; **WEBS Leads Output 9**, **WEBS Agent Intel Output 9**, **WEBS All Leads Output 9**.
+- Exec 154: Leads+Agent Intel OK, All Leads 0 (fixed before 155).
+- Lead Intel still 46 nodes with Phase 2 routing.
+
+**Not done**
+- Probe + debug workflows not deleted from inventory (UI).
+- SAM.gov key not rotated at sam.gov (Luis).
+- Phase 3 relevance model not started.
+- No commit of n8n core patch file itself (lives under Homebrew node_modules); only the re-apply script is in git.
+
+**Broken or risky**
+- n8n upgrade without re-running the patch script breaks WEBS login again.
+- Never write `~/.n8n/database.sqlite` directly. Gmail drafts only.
+
+**Next step**
+1. Luis: rotate SAM key; delete probe + WEBS debug workflows in UI.
+2. Optional: scheduled Daily WEBS run confirmation tomorrow morning.
+3. Phase 3 relevance / capability model when ready for better Pursue/draft signal.
+4. After any `brew upgrade n8n`: `./scripts/patch-n8n-httprequest-form-auth.sh` then `launchctl kickstart -k gui/$(id -u)/com.omegacortex.n8n`.
+
+**Needs Luis**
+- SAM key rotation + credential update
+- UI deletes (probe, WebsCredDebug*)
+- FSIPAP (HCA, closes Aug 19) manual pursuit
+
 ## 2026-08-10 22:50 — Mac mini — Phase 0.2/0.3, 1 params, 2, WA awards
 
 **State at start:** Live instance already had Phase 0.3 Sheets backoff and Phase 1 SAM query params on production workflows (contrary to stale STATUS/SESSION-LOG). Phase 2 / WA awards / toggle-sam scripts were missing from the repo. Probe present and active. SAM.gov API key still plaintext on SAM.gov Query nodes. Agent Intel v2 Scoring had been 0 when only WEBS leads were researched.

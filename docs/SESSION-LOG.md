@@ -6,6 +6,53 @@ Every session appends an entry here before pushing. A session without a pushed h
 
 ---
 
+## 2026-08-10 22:50 — Mac mini — Phase 0.2/0.3, 1 params, 2, WA awards
+
+**State at start:** Live instance already had Phase 0.3 Sheets backoff and Phase 1 SAM query params on production workflows (contrary to stale STATUS/SESSION-LOG). Phase 2 / WA awards / toggle-sam scripts were missing from the repo. Probe present and active. SAM.gov API key still plaintext on SAM.gov Query nodes. Agent Intel v2 Scoring had been 0 when only WEBS leads were researched.
+
+**Done**
+- Created and applied `scripts/apply-phase-2.sh`: IF `Route by Source` (WEBS), Code `Bypass Award Research`, Merge `Join Award Paths`; Scoring fed only from Join. Lead Intelligence v2 now **46** nodes.
+- Created and applied `scripts/apply-wa-awards.sh`: Scoring + Evaluate Draft Eligibility treat state/WEBS leads as `Evidence Confidence: N/A - State` and do not block Pursue/drafts solely for missing federal award history.
+- Created `scripts/toggle-sam.sh` and set SAM intake **off** on Contract Scanner + WEBS Test (node disabled, NAICS→SAM disconnected).
+- Restored WEBS Test from fixed backup to **36** nodes (was BLOB-corrupted again); left inactive/unpublished.
+- Imported credential `SamGovApiKey01` / `SAM.gov API Key` (`httpQueryAuth`, query name `api_key`). Patched both SAM.gov Query nodes to `genericCredentialType` + credential; removed embedded `api_key` param. Live full export: **no `SAM-9667` plaintext**.
+- Unpublished and deactivated probe `5ToIbeWkCWOFLywk` (no CLI delete in 2.33.7). Still listed in inventory.
+- Reconfirmed production trio active + published: Lead Intel, Contract Scanner, Context Failure Logger.
+- `scripts/scan-secrets.sh` clean on the repo.
+
+**Verified (live)**
+- Health 200; n8n 2.33.7; Node 24.19.0; wake 5:00 AM.
+- Sheets backoff 60000ms: Lead Intel 11/11, Scanner 2/2, Failure Logger 3/3.
+- Scanner SAM: `limit=200`, timeout 120000, credentialed, **disabled**.
+- Exec **118** (post Phase 2): success; Scoring non-zero via WEBS bypass path.
+- Exec **119** (post WA awards): success; state evidence path; gate no longer Low-evidence blocking WEBS; remaining blockers capability/priority/deadline/active.
+- Lifetime at handoff: 119 executions, 54 errors.
+
+**Not done**
+- Probe not fully deleted (UI delete still required) — instance 7 workflows, should be 6.
+- SAM.gov key **not rotated** at sam.gov (Luis only).
+- SAM intake left off on purpose until rotation + intentional re-enable.
+- Phase 3 relevance model not started.
+- No new Gmail drafts expected until relevance/capability scoring improves; Gmail still drafts-only.
+
+**Broken or risky**
+- Old SAM key may still exist in `~/n8n-backups/` and pre-fix exports — rotate before treating intake as safe.
+- WEBS Test SAM node still has legacy `limit=1000` (disabled, non-prod).
+- `n8n execute` conflicts with LaunchAgent ports; bootout/execute/bootstrap if manual CLI runs are needed.
+- Never write `~/.n8n/database.sqlite` directly.
+
+**Next step**
+1. Luis: rotate SAM.gov API key; update n8n credential `SAM.gov API Key`.
+2. Luis: delete probe workflow in UI.
+3. When ready for federal intake: `./scripts/toggle-sam.sh on --yes`, publish Scanner, restart, manual Scanner run, confirm records.
+4. Phase 3: relevance / capability model (FSIPAP-class signal, exclusions, deadlines).
+
+**Needs Luis**
+- SAM key rotation + credential value update
+- Probe UI delete
+- FSIPAP (HCA, closes Aug 19) — manual pursuit, does not wait on agent
+- Gmail OAuth if draft creation fails on next eligible run
+
 ## 2026-08-10 23:15 — Phase 0.3 + Phase 1 automation prepared
 
 **Built** `scripts/apply-phase-0-1.sh`. One command applies the Sheets backoff

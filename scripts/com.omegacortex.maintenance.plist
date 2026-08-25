@@ -7,6 +7,7 @@
   <key>ProgramArguments</key>
   <array>
     <string>/Users/luislozada/omegaCORTEX/scripts/weekly-maintenance.sh</string>
+    <string>--apply</string>
   </array>
   <key>StartCalendarInterval</key>
   <dict>

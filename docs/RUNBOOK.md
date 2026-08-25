@@ -30,6 +30,8 @@ Check Gmail still authenticates. Google OAuth tokens die quietly, and if the app
 
 ## Monthly
 
+Weekly log maintenance is defined in `scripts/weekly-maintenance.sh`: run it with no arguments for a logged dry-run, or review its output and use `--apply` to trim only the allowlisted oversized logs and remove crash reports older than 14 days. The matching unloaded Sunday 11:00 PM LaunchAgent template is `scripts/com.omegacortex.maintenance.plist` and intentionally ships without `--apply`.
+
 Rotate the SAM.gov API key.
 
 Prune executions to 30 days. Each stores full payloads.

@@ -36,3 +36,15 @@ venv/
 # Node
 node_modules/
 npm-debug.log*
+
+# Business work product: stays local, never pushed
+pursuits/
+leads/
+policies/
+capability/
+
+# Consolidated business folders (moved in 2026-09-16 reorg)
+# sam-hunter is its own git repo, never nest it in this one
+sam-hunter/
+n8n-backups/
+omegacortex-data/

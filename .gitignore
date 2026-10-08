@@ -42,6 +42,7 @@ pursuits/
 leads/
 policies/
 capability/
+agents/
 
 # Consolidated business folders (moved in 2026-09-16 reorg)
 # sam-hunter is its own git repo, never nest it in this one

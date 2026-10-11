@@ -49,3 +49,7 @@ agents/
 sam-hunter/
 n8n-backups/
 omegacortex-data/
+
+# Sunday QA output: names pursuits and partners, stays local
+qa/*
+!qa/SUNDAY-QA.md
